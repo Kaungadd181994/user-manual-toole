@@ -1,56 +1,55 @@
-name: Extract Uploaded ZIP File
-
-on:
-  push:
-    branches:
-      - main
-      - master
-    paths:
-      - "*.zip"
-
-permissions:
-  contents: write
-
-jobs:
-  extract:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Locate and Extract ZIP
-        run: |
-          # Find the first zip file in the root
-          ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
-          
-          if [ -z "$ZIP_FILE" ]; then
-            echo "No zip file found in root. Skipping."
-            exit 0
-          fi
-          
-          echo "Found zip archive: $ZIP_FILE"
-          
-          # Extract zip directly into root, overwriting existing files
-          unzip -o "$ZIP_FILE" -d .
-          
-          # Remove the zip file
-          rm "$ZIP_FILE"
-          echo "Extracted and deleted $ZIP_FILE successfully."
-
-      - name: Commit and Push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git add -A
-          
-          # Check if there are any changes to commit
-          if git diff-index --quiet HEAD --; then
-            echo "No files modified or added. Nothing to commit."
-          else
-            git commit -m "chore: auto-extract uploaded zip and clean up archive"
-            git push origin HEAD
-            echo "Changes pushed successfully!"
-          fi
+Skip to content
+Kaungadd181994
+user-manual-toole
+Repository navigation
+Code
+Issues
+Pull requests
+Agents
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+Settings
+Extract Uploaded ZIP File
+Add files via upload #4
+All jobs
+Run details
+Annotations
+1 error and 1 warning
+extract
+failed now in 7s
+Search logs
+0s
+0s
+0s
+1s
+Run git config --global user.name "github-actions[bot]"
+[main 69115e0] chore: auto-extract uploaded zip and clean up archive
+ 20 files changed, 2645 insertions(+), 2 deletions(-)
+ create mode 100644 .env.example
+ create mode 100644 .github/workflows/deploy.yml
+ create mode 100644 .gitignore
+ delete mode 100644 ai-guide-builder (2).zip
+ create mode 100644 index.html
+ create mode 100644 metadata.json
+ create mode 100644 package-lock.json
+ create mode 100644 package.json
+ create mode 100644 server.ts
+ create mode 100644 src/App.tsx
+ create mode 100644 src/components/BuilderTab.tsx
+ create mode 100644 src/components/SettingsTab.tsx
+ create mode 100644 src/components/StepCard.tsx
+ create mode 100644 src/index.css
+ create mode 100644 src/main.tsx
+ create mode 100644 src/types.ts
+ create mode 100644 src/utils/export.ts
+ create mode 100644 tsconfig.json
+ create mode 100644 vite.config.ts
+To https://github.com/Kaungadd181994/user-manual-toole
+ ! [remote rejected] HEAD -> main (refusing to allow a GitHub App to create or update workflow `.github/workflows/deploy.yml` without `workflows` permission)
+error: failed to push some refs to 'https://github.com/Kaungadd181994/user-manual-toole'
+Error: Process completed with exit code 1.
+1s
+0s
