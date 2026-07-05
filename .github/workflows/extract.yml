@@ -1,0 +1,35 @@
+name: Extract Zip to Root
+
+on:
+  push:
+    branches:
+      - main  # or whatever your default branch is
+
+jobs:
+  extract-and-process:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out your repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Unzip the file directly into the root directory
+      # The '-o' flag overwrites existing files without asking, preventing the runner from hanging.
+      # The '-d .' flag forces it to extract "right here" in the root.
+      - name: Extract upload.zip to root
+        run: |
+          if [ -f "upload.zip" ]; then
+            echo "Found upload.zip, extracting..."
+            unzip -o upload.zip -d .
+            
+            # Optional: Delete the original zip so it doesn't clutter your repo
+            rm upload.zip 
+          else
+            echo "Error: upload.zip not found in the root directory!"
+            exit 1
+          fi
+
+      # Step 3: Verify the structure (Optional, but great for debugging)
+      - name: List root directory structure
+        run: ls -la
