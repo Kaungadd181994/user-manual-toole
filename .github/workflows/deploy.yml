@@ -1,35 +1,51 @@
-name: Extract Uploaded ZIP File
+ame: Extract ZIP and Commit to Repo
 
 on:
   push:
     branches:
       - main
-      - master
-    paths:
-      - "*.zip"
+  workflow_dispatch:
+
+# We need write permissions to push files back into the repository
+permissions:
+  contents: write
 
 jobs:
-  extract:
+  extract-and-commit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Locate and Extract ZIP
+      - name: Auto-Detect and Extract ZIP
         run: |
-          # Find the first zip file in the root
           ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
           
           if [ -z "$ZIP_FILE" ]; then
-            echo "No zip file found in root. Skipping."
-            exit 0
+            echo "❌ ERROR: No .zip file found!"
+            exit 1
           fi
           
-          echo "Found zip archive: $ZIP_FILE"
+          echo "📦 Extracting $ZIP_FILE directly into the repository root..."
+          # Unzips directly into the main folder
+          unzip -o "$ZIP_FILE" -d ./
           
-          # Extract zip directly into root, overwriting existing files
-          unzip -o "$ZIP_FILE" -d .
+          # Optional: Delete the zip file after extraction so you don't keep both
+          # rm "$ZIP_FILE"
+
+      - name: Commit and Push Extracted Files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Remove the zip file
-          rm "$ZIP_FILE"
-          echo "Extracted and deleted $ZIP_FILE successfully."
+          git add .
+          
+          # Only commit if there are actually new/changed files to prevent errors
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit"
+          else
+            git commit -m "Automation: Automatically extracted ZIP files"
+            git push origin main
+          fi
