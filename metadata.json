@@ -1,0 +1,6 @@
+{
+  "name": "AI Guide Builder",
+  "description": "Generate a professional step-by-step user guide from a screen-recording video using Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
